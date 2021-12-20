@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Employees from Department</title>
+    <script>
+        window.onload = function () {
+            var Departments = [
+                { DeptNo: 10, DeptName: 'IT' },
+                { DeptNo: 20, DeptName: 'HR' },
+                { DeptNo: 30, DeptName: 'SL' },
+                { DeptNo: 40, DeptName: 'TR' },
+                { DeptNo: 50, DeptName: 'AC' }
+            ];
+
+            var dOptions;
+            for (var i = 0; i < Departments.length; i++) {
+                dOptions += '<option value="' + Departments[i].DeptNo + '">' + Departments[i].DeptName + '</option>';
+            }
+
+            document.getElementById('lstdept').innerHTML = dOptions;
+
+            var Employees = [
+                { EmpNo: 1, EmpName: "Ranjan", DeptNo: 10, Salary: 10000 },
+                { EmpNo: 2, EmpName: "John", DeptNo: 20, Salary: 12000 },
+                { EmpNo: 3, EmpName: "Vaibhav", DeptNo: 40, Salary: 9000 },
+                { EmpNo: 4, EmpName: "Pawan", DeptNo: 30, Salary: 18000 },
+                { EmpNo: 5, EmpName: "Ram", DeptNo: 10, Salary: 15000 },
+                { EmpNo: 6, EmpName: "Rutu", DeptNo: 30, Salary: 12000 },
+                { EmpNo: 7, EmpName: "Harsh", DeptNo: 50, Salary: 22000 },
+                { EmpNo: 8, EmpName: "Aditya", DeptNo: 10, Salary: 30000 },
+                { EmpNo: 9, EmpName: "Siddharth", DeptNo: 20, Salary: 24000 },
+                { EmpNo: 10, EmpName: "Sameer", DeptNo: 50, Salary: 27000 },
+                { EmpNo: 11, EmpName: "Nakul", DeptNo: 40, Salary: 35000 },
+                { EmpNo: 12, EmpName: "Arjun", DeptNo: 30, Salary: 32000 }
+            ];
+
+            document.getElementById('lstdept')
+                .addEventListener('change', function () {
+                    document.getElementById('EmpTbl').innerHTML = "";
+                    for (var i = 0; i < Employees.length; i++) {
+                        if (this.options[this.selectedIndex].value == Employees[i].DeptNo) {
+                            document.getElementById('EmpTbl').innerHTML += '<tr><td id="EmpNo"> ' + Employees[i].EmpNo + '</td>' +
+                                '<td id="EmpName"> ' + Employees[i].EmpName + '</td>' +
+                                '<td id="DeptNo"> ' + Employees[i].DeptNo + '</td>' +
+                                '<td id="Salary"> ' + Employees[i].Salary + '</td>' +
+                                '</tr>';
+                        }
+                    }
+                }, false);
+
+
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <label>Select Department </label>
+        <br>
+        <select id="lstdept"></select>
+        <table>
+            <thead>
+                <tr>
+                    <th>EmpNo</th>
+                    <th>EmpName</th>
+                    <th>DeptNo</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+            <tbody id="EmpTbl"></tbody>
+        </table>
+    </div>
+</body>
+
+</html>

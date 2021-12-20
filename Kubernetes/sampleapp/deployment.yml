@@ -1,0 +1,25 @@
+# Deploying the single NodeJS application on Kubernetes environment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servicedeploy
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: service1
+  template:
+    metadata:
+      labels:
+        app: service1
+    spec:
+      containers:
+      - name: servicecontainer1
+        image: ranjanrsorte/service1:latest # Pull the image from the docker hub repository
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 7021

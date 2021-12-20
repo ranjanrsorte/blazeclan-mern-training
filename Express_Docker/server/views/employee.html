@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD App</title>
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <script>
+        var employees = [];
+
+        function getAllEmployeeData() {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(error);
+                };
+
+                ajax.open("GET", "http://localhost:7013/api/employees");
+                ajax.send();
+            });
+        }
+
+        function findSearchedTextEmployee(text) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(error);
+                };
+
+                ajax.open("GET", "http://localhost:7013/api/employee/getSearchedText/" + text);
+                ajax.send();
+            });
+        }
+
+        function addEmployee(emp) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                ajax.open("POST", "http://localhost:7013/api/add/employee");
+                ajax.setRequestHeader("Content-Type", "application/json");
+                ajax.send(JSON.stringify(emp));
+            });
+        }
+
+        function updateEmployee(emp) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                ajax.open("PUT", "http://localhost:7013/api/update/employee/" + emp.empno);
+                ajax.setRequestHeader("Content-Type", "application/json");
+                ajax.send(JSON.stringify(emp));
+            });
+        }
+
+        function deleteEmployee(empno) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+                ajax.open("DELETE", `http://localhost:7013/api/delete/employee/${empno}`);
+                ajax.setRequestHeader("Content-Type", "application/json");
+                ajax.send();
+            });
+        }
+
+        function generateEmployeeTable(data) {
+            let tableKeys = Object.keys(data[0]);
+            var table = '<table>';
+            var tr = '<tr>';
+            table += '<thead><tr>';
+            for (let x = 0; x < tableKeys.length; x++) {
+                table += '<th>' + tableKeys[x].toUpperCase() + '</th>';
+            }
+            table += '</tr></thead><tbody>';
+
+            for (let i = 0; i < data.length; i++) {
+                tr += '<td id="emp_' + data[i].empno + '">' + data[i].empno + '</td>'
+                    + '<td>' + data[i].empname + '</td>'
+                    + '<td>' + data[i].designation + '</td>'
+                    + '<td>' + data[i].salary + '</td>'
+                    + '<td>' + data[i].deptno + '</td>'
+                    + '</tr>';
+            }
+
+            table += tr + '</tbody>';
+            return table;
+        }
+
+        window.onload = function () {
+            var employeeList = getAllEmployeeData();
+            employeeList.then(function (response) {
+                let data = JSON.parse(response);
+                tbody = generateEmployeeTable(data.data);
+                document.getElementById('empTblId').innerHTML = tbody;
+                let allEmployees = data.data;
+                for (let i = 0; i < allEmployees.length; i++) {
+                    let empId = 'emp_' + allEmployees[i].empno;
+                    document.getElementById(empId).addEventListener('click', function () {
+                        document.getElementById("empnoId").value = allEmployees[i].empno;
+                        document.getElementById("empnameId").value = allEmployees[i].empname;
+                        document.getElementById("designationId").value = allEmployees[i].designation;
+                        document.getElementById("salaryId").value = allEmployees[i].salary;
+                        document.getElementById("deptId").value = allEmployees[i].deptno;
+                    }, false);
+                }
+                document.getElementById('empnoId').value = "";
+                document.getElementById('empnameId').value = "";
+                document.getElementById('designationId').value = "";
+                document.getElementById('salaryId').value = "";
+                document.getElementById('deptId').value = "";
+            }).catch(function (error) {
+                document.getElementById('empTblId').innerHTML = error;
+            });
+
+            document.getElementById('btnSave').addEventListener('click', function () {
+                let emp = {
+                    "empno": document.getElementById('empnoId').value,
+                    "empname": document.getElementById('empnameId').value,
+                    "designation": document.getElementById('designationId').value,
+                    "salary": document.getElementById('salaryId').value,
+                    "deptno": document.getElementById('deptId').value
+                };
+                var empData = addEmployee(emp);
+                empData.then(function (response) {
+                    employees.push(JSON.parse(response));
+                }).catch(function (error) {
+                    document.getElementById('empTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('btnUpdate').addEventListener('click', function () {
+                let emp = {
+                    "empno": document.getElementById('empnoId').value,
+                    "empname": document.getElementById('empnameId').value,
+                    "designation": document.getElementById('designationId').value,
+                    "salary": document.getElementById('salaryId').value,
+                    "deptno": document.getElementById('deptId').value
+                };
+                var empData = updateEmployee(emp);
+                empData.then(function (response) {
+                    employees.push(JSON.parse(response));
+                }).catch(function (error) {
+                    document.getElementById('empTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('btnDelete').addEventListener('click', function () {
+                let empno = document.getElementById("empnoId").value;
+                var empData = deleteEmployee(empno);
+                deptData.then(function (response) {
+                    employees.push(JSON.parse(response));
+                }).catch(function (error) {
+                    document.getElementById('empTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('searchTextId').addEventListener('change', function () {
+                let foundData = findSearchedTextEmployee(this.value);
+                foundData.then(function (response) {
+                    let data = JSON.parse(response);
+                    tbody = generateEmployeeTable(data.data);
+                    document.getElementById('empTblId').innerHTML = tbody;
+                }).catch(function (error) {
+                    document.getElementById('empTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('btnClear').addEventListener('click', function () {
+                document.getElementById('empnoId').value = "";
+                document.getElementById('empnameId').value = "";
+                document.getElementById('designationId').value = "";
+                document.getElementById('salaryId').value = "";
+                document.getElementById('deptId').value = "";
+            }, false);
+
+        }
+    </script>
+</head>
+
+<body>
+    <h1>NodeJS Express CRUD App with PostgreSQL</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Employee No</label>
+                <input type="number" class="form-control" id="empnoId" />
+                <br />
+                <label>Employee Name</label>
+                <input type="text" class="form-control" id="empnameId" />
+                <br />
+                <label>Designation</label>
+                <input type="text" class="form-control" id="designationId" />
+                <br />
+                <label>Salary</label>
+                <input type="number" class="form-control" id="salaryId" />
+                <br />
+                <label>Department No</label>
+                <input type="number" class="form-control" id="deptId" />
+                <br />
+                <button id="btnSave" class="btn btn-primary">Save</button>
+                <button id="btnUpdate" class="btn btn-success">Update</button>
+                <button id="btnClear" class="btn btn-warning">Clear</button>
+                <button id="btnDelete" class="btn btn-danger">Delete</button>
+            </div>
+            <div class="col-sm-6">
+                <input type="text" id="searchTextId" class="form-control" placeholder="Search Employee By Name" />
+                <br />
+                <table id="empTblId" class="table table-border table-striped"></table>
+            </div>
+        </div>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1 
+metadata:
+  name:  service1
+spec:
+  selector:
+    app:  service1
+  type:  LoadBalancer
+  ports:
+    - port:  9065
+      targetPort:  7021

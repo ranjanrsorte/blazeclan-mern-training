@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  code:
+    build: code
+    ports: 
+      - "7013:7013"
+  server:
+    build: server
+    ports:
+      - "7011:7011"

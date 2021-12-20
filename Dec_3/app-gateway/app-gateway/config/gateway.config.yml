@@ -1,0 +1,56 @@
+http:
+  port: 8090
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api:
+   host: localhost
+   paths: '/ip'
+  firstserv:
+   host: localhost
+   paths: ['/api/employees', '/api/employees/*']
+  secondserv:
+   host: localhost
+   paths: ['/api/persons', '/api/persons/*']
+serviceEndpoints:
+  httpbin:
+   url: 'https://httpbin.org'
+  firstservice:
+   url: 'http://localhost:7021'
+  secondservice:
+   url: 'http://localhost:7022'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: httpbin 
+            changeOrigin: true
+  firstServicePipeline:
+    apiEndpoints:
+      - firstserv
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: firstservice
+              changeOrigin: true
+  secondServicePipeline:
+    apiEndpoints:
+      - secondserv
+    policies:
+     - proxy:
+          - action:
+              serviceEndpoint: secondservice
+              changeOrigin: true

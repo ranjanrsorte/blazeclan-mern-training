@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node Application</title>
+    <script>
+        var employees = [];
+
+        function addEmployeeData(employee) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                // open a request for REST API, start an async calls
+                ajax.open("POST", "http://localhost:9090/app/post");
+                // set the header Media Type Format aka (MIME Type)
+                // this format will be used by REST API to Process the received data
+                ajax.setRequestHeader("Content-Type", "application/json");
+                // start sending the request. The body MUST be always in JSON String Format
+                ajax.send(JSON.stringify(employee));
+            });
+        }
+
+        function getEmployeeData() {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                // open a request for REST API, start an async calls
+                ajax.open("GET", "http://localhost:9090/app/getemployees");
+                // set the header Media Type Format aka (MIME Type)
+                // this format will be used by REST API to Process the received data
+                ajax.setRequestHeader("Content-Type", "application/json");
+                // start sending the request. The body MUST be always in JSON String Format
+                ajax.send();
+            });
+        }
+
+        function updateEmployee(emp) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                // open a request for REST API, start an async calls
+                ajax.open("PUT", `http://localhost:9090/app/updateemployee/${emp.empNo}`);
+                // set the header Media Type Format aka (MIME Type)
+                // this format will be used by REST API to Process the received data
+                ajax.setRequestHeader("Content-Type", "application/json");
+                // start sending the request. The body MUST be always in JSON String Format
+                ajax.send(JSON.stringify(emp));
+            });
+        }
+
+        function deleteEmployee(emp) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                ajax.open("DELETE", `http://localhost:9090/app/deleteemployee/${emp.empNo}`);
+                // set the header Media Type Format aka (MIME Type)
+                // this format will be used by REST API to Process the received data
+                ajax.setRequestHeader("Content-Type", "application/json");
+                // start sending the request. The body MUST be always in JSON String Format
+                ajax.send();
+            });
+        }
+
+        function generateEmployeeTable(data) {
+            let tableKeys = Object.keys(data[0]);
+            var table = '<table>';
+            var tr = '<tr>';
+            table += '<thead><tr>';
+            for (let x = 0; x < tableKeys.length; x++) {
+                table += '<th>' + tableKeys[x] + '</th>';
+            }
+            table += '</tr></thead><tbody>';
+
+            for (let i = 0; i < data.length; i++) {
+                tr += '<td id="emp_' + data[i].empNo + '">' + data[i].empNo + '</td>'
+                    + '<td>' + data[i].empName + '</td>'
+                    + '<td>' + data[i].designation + '</td>'
+                    + '<td>' + data[i].deptName + '</td>'
+                    + '<td>' + data[i].salary + '</td>'
+                    + '</tr>';
+            }
+
+            table += tr + '</tbody>';
+            return table;
+        }
+
+        window.onload = function () {
+            document.getElementById('btnAdd').addEventListener('click', function () {
+                let emp = {
+                    "empNo": document.getElementById('empNoId').value,
+                    "empName": document.getElementById('empNameId').value,
+                    "designation": document.getElementById('empDesigId').value,
+                    "deptName": document.getElementById('DeptNameId').value,
+                    "salary": document.getElementById('SalaryId').value
+                };
+                var empData = addEmployeeData(emp);
+                empData.then(function (response) {
+                    employees.push(JSON.parse(response));
+                }).catch(function (error) {
+                    document.getElementById('empTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('getEmployeesList').addEventListener('click', function () {
+                var employeesList = getEmployeeData().then(function (response) {
+                    let data = JSON.parse(response);
+                    tbody = generateEmployeeTable(data);
+                    document.getElementById('empTblId').innerHTML = tbody;
+                    for (let i = 0; i < data.length; i++) {
+                        document.getElementById('emp_' + data[i].empNo).addEventListener('click', function () {
+                            document.getElementById("empNoId").value = data[i].empNo;
+                            document.getElementById("empNameId").value = data[i].empName;
+                            document.getElementById("empDesigId").value = data[i].designation;
+                            document.getElementById("DeptNameId").value = data[i].deptName;
+                            document.getElementById("SalaryId").value = data[i].salary;
+                        }, false);
+                    }
+                    document.getElementById('empNoId').value = "";
+                    document.getElementById('empNameId').value = "";
+                    document.getElementById('empDesigId').value = "";
+                    document.getElementById('DeptNameId').value = "";
+                    document.getElementById('SalaryId').value = "";
+                }).catch(function (error) {
+                    document.getElementById('empTblId').innerHTML = error;
+                });;
+
+            }, false);
+
+            document.getElementById('updateEmployeeId').addEventListener('click', function () {
+                let employee = {
+                    "empNo": document.getElementById('empNoId').value,
+                    "empName": document.getElementById('empNameId').value,
+                    "designation": document.getElementById('empDesigId').value,
+                    "deptName": document.getElementById('DeptNameId').value,
+                    "salary": document.getElementById('SalaryId').value
+                }
+                updateEmployee(employee);
+                document.getElementById('empNoId').value = "";
+                document.getElementById('empNameId').value = "";
+                document.getElementById('empDesigId').value = "";
+                document.getElementById('DeptNameId').value = "";
+                document.getElementById('SalaryId').value = "";
+            }, false);
+
+            document.getElementById('deleteEmployeeId').addEventListener('click', function () {
+                let employee = {
+                    "empNo": document.getElementById('empNoId').value,
+                    "empName": document.getElementById('empNameId').value,
+                    "designation": document.getElementById('empDesigId').value,
+                    "deptName": document.getElementById('DeptNameId').value,
+                    "salary": document.getElementById('SalaryId').value
+                }
+                deleteEmployee(employee);
+                document.getElementById('empNoId').value = "";
+                document.getElementById('empNameId').value = "";
+                document.getElementById('empDesigId').value = "";
+                document.getElementById('DeptNameId').value = "";
+                document.getElementById('SalaryId').value = "";
+            }, false);
+
+            document.getElementById('btnClear').addEventListener('click', function () {
+                document.getElementById('empNoId').value = "";
+                document.getElementById('empNameId').value = "";
+                document.getElementById('empDesigId').value = "";
+                document.getElementById('DeptNameId').value = "";
+                document.getElementById('SalaryId').value = "";
+            }, false);
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Employee Table Application using Node</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <label>Employee No</label>
+                    <input type="number" id="empNoId" placeholder="Enter Employee Id">
+                </td>
+                <td>
+                    <label>Employee Name</label>
+                    <input type="text" id="empNameId" placeholder="Enter Employee Name">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Designation</label>
+                    <input type="text" id="empDesigId" placeholder="Enter Designation">
+                </td>
+                <td>
+                    <label>Department Name</label>
+                    <input type="text" id="DeptNameId" placeholder="Enter Department">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Salary</label>
+                    <input type="text" id="SalaryId" placeholder="Enter Salary">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnAdd">Add Employee</button>
+                    <button id="getEmployeesList">Get Employees</button>
+                    <button id="updateEmployeeId">Update</button>
+                    <button id="deleteEmployeeId">Delete</button>
+                    <button id="btnClear">Clear</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <div id="empTblId"></div>
+</body>
+
+</html>

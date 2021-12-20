@@ -1,0 +1,14 @@
+{
+  "name": "assignment_5",
+  "version": "1.0.0",
+  "description": "This project contains solution for Assignment 5",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "bootstrap": "^5.1.3"
+  }
+}

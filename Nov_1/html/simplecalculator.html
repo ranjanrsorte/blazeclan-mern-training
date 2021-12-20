@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <script src="./../code/simplecalculator.js"></script>
+    <script>
+        window.onload = function () {
+            var n1 = "";
+            var n2 = "";
+            var opr;
+            var res;
+
+            document.getElementById('btnSeven')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnSeven').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnEight')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnEight').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnNine')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnNine').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnFour')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnFour').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnFive')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnFive').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnSix')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnSix').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnOne')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnOne').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnTwo')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnTwo').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnThree')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnThree').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnPoint')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnPoint').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnZero')
+                .addEventListener('click', function () {
+                    n1 += document.getElementById('btnZero').value;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnDivide')
+                .addEventListener('click', function () {
+                    n1 = 1 / n1;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnAdd')
+                .addEventListener('click', function () {
+                    opr = document.getElementById('btnAdd').value;
+                    n1 += opr;
+                }, false);
+
+            document.getElementById('btnSub')
+                .addEventListener('click', function () {
+                    opr = document.getElementById('btnSub').value;
+                    n1 += opr;
+                }, false);
+
+            document.getElementById('btnMult')
+                .addEventListener('click', function () {
+                    opr = document.getElementById('btnMult').value;
+                    n1 += opr;
+                }, false);
+
+            document.getElementById('btnDiv')
+                .addEventListener('click', function () {
+                    opr = document.getElementById('btnDiv').value;
+                    n1 += opr;
+                }, false);
+
+            document.getElementById('btnSquare')
+                .addEventListener('click', function () {
+                    n1 = n1 * n1;
+                    document.getElementById('showText').value = n1;
+                }, false);
+
+            document.getElementById('btnEquals')
+                .addEventListener('click', function () {
+                    n2 = eval(document.getElementById('showText').value);
+                    
+                    document.getElementById('showText').value = n2;
+                }, false);
+
+            document.getElementById('btnClear')
+                .addEventListener('click', function () {
+                    n1 = "";
+                    opr = "";
+                    document.getElementById('showText').value = "";
+                }, false);
+        }
+    </script>
+</head>
+
+<body>
+    <input type="text" id="showText" value="0" />
+    <br><br>
+    <div>
+        <input type="button" value="C" id="btnClear">
+        <input type="button" value="x^2" id="btnSquare">
+        <input type="button" value="1/x" id="btnDivide">
+        <input type="button" value="/" id="btnDiv">
+        <br><br>
+        <input type="button" value="7" id="btnSeven">
+        <input type="button" value="8" id="btnEight">
+        <input type="button" value="9" id="btnNine">
+        <input type="button" value="*" id="btnMult">
+        <br><br>
+        <input type="button" value="4" id="btnFour">
+        <input type="button" value="5" id="btnFive">
+        <input type="button" value="6" id="btnSix">
+        <input type="button" value="-" id="btnSub">
+        <br><br>
+        <input type="button" value="1" id="btnOne">
+        <input type="button" value="2" id="btnTwo">
+        <input type="button" value="3" id="btnThree">
+        <input type="button" value="+" id="btnAdd">
+        <br><br>
+        <input type="button" value="0" id="btnZero">
+        <input type="button" value="." id="btnPoint">
+        <input type="button" value="=" id="btnEquals">
+    </div>
+</body>
+
+</html>

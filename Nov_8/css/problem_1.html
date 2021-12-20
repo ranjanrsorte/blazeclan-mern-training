@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        td {
+            border: 1px solid black;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            var list = document.getElementsByTagName('li');
+            for (var index = 0; index < list.length; index++) {
+
+                list[index].addEventListener('dragstart', function (evt) {
+                    evt.dataTransfer.setData('Text', evt.target.id);
+                    evt.dataTransfer.setData('TextCont', evt.target.className);
+                }, false);
+                //textContent
+            }
+            var totalPrice = 0;
+            var prodQuantity = 0;
+            var trgdiv = document.getElementById('trgdiv');
+
+            trgdiv.addEventListener('drop', function (evt) {
+                evt.preventDefault();
+                var id = evt.dataTransfer.getData('Text');
+                var textCont = evt.dataTransfer.getData('TextCont');
+                var input = '<div id="dvQuant_' + id + '" style="padding: 2px;">' + textCont + ' ' + '<input id="txtquant_' + id + '" type="text" placeholder="Enter Quantity"/>' + '<input id="inpQuant_' + id + '" type="button" value="Remove">' + '</div>';
+                var target = document.createElement('div');
+                target.innerHTML += input;
+                evt.target.appendChild(target);
+
+                document.getElementById('txtquant_' + id).addEventListener('change', function () {
+                    prodQuantity = this.value;
+                    totalPrice += parseInt(id) * parseInt(prodQuantity);
+                    document.getElementById('dvTotalPrice').innerHTML = "";
+                    document.getElementById('dvTotalPrice').innerHTML += 'Total: ' + totalPrice;
+                }, false);
+
+                document.getElementById(id).innerHTML = "";
+
+                document.getElementById('inpQuant_' + id).addEventListener('click', function () {
+                    document.getElementById('dvQuant_' + id).innerHTML = "";
+                    console.log(parseInt(id));
+                    totalPrice = parseInt(totalPrice) - (parseInt(id) * parseInt(prodQuantity));
+                    document.getElementById('dvTotalPrice').innerHTML = "";
+                    document.getElementById('dvTotalPrice').innerHTML += 'Total: ' + totalPrice;
+                }, false);
+
+            }, false);
+
+            trgdiv.addEventListener('dragover', function (evt) {
+                evt.preventDefault();
+            }, false);
+        }
+    </script>
+</head>
+
+<body>
+    <h2>Drag-Drop in List</h2>
+    <table>
+        <tbody>
+            <tr>
+                <td style="background-color: darkcyan; text-align: center;">
+                    <h4>Products</h4>
+                </td>
+                <td style="background-color: darkcyan; text-align: center;">
+                    <h4>Price</h4>
+                </td>
+                <td style="background-color: darkcyan; text-align: center;">
+                    <h4>Add Products</h4>
+                </td>
+            </tr>
+            <tr>
+                <td style="background-color: cyan;">
+                    <ul>
+                        <li id="40000" draggable="true" class="Computer">Computer</li>
+                        <li id="5000" draggable="true" class="Printer">Printer</li>
+                        <li id="10000" draggable="true" class="Mobile">Mobile</li>
+                        <li id="1000" draggable="true" class="Headphones">Headphones</li>
+                        <li id="500" draggable="true" class="Keyboard">Keyboard</li>
+                        <li id="500" draggable="true" class="Charger">Charger</li>
+                    </ul>
+                </td>
+                <td style="background-color: cyan;">
+                    <ul>
+                        <li>Rs. 40000</li>
+                        <li>Rs. 5000</li>
+                        <li>Rs. 10000</li>
+                        <li>Rs. 1000</li>
+                        <li>Rs. 500</li>
+                        <li>Rs. 500</li>
+                    </ul>
+                </td>
+                <td id="trgdiv" style="background-color: cyan; text-align: center;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="background-color: cyan; padding: 5px;" id="dvTotalPrice">Total: </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

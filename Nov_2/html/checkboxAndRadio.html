@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Radio Buttons & Checkboxes</title>
+    <script src="./../code/uigenerator.js"></script>
+    <script src="./../code/logic.js"></script>
+    <script>
+        window.onload = function() {
+            var uiGenerator = new UiGenerator();
+            var logic = new Logic();
+            document.getElementById('radioBtn').innerHTML = uiGenerator.generateRadioBtns(logic.getAllRadioBtns());
+            document.getElementById('chkBox').innerHTML = uiGenerator.generateCheckBoxes(logic.getSubjectNames());
+        }
+    </script>
+</head>
+<body>
+    <h1>Show Radio Buttons</h1>
+    <div id="radioBtn"></div>
+
+    <h1>Show Checkboxes</h1>
+    <div id="chkBox"></div>
+</body>
+</html>

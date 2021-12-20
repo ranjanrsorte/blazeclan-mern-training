@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Operation</title>
+    <script src="./../code/referenceFunction.js"></script>
+    <script>
+        window.onload = function() {
+            var sampleStr = "The James Bond series focuses on a fictional British Secret Service agent created in 1953 by writer Ian Fleming, who featured him in twelve novels and two short-story collections. Since Fleming's death in 1964, eight other authors have written authorised Bond novels or novelisations: Kingsley Amis, Christopher Wood, John Gardner, Raymond Benson, Sebastian Faulks, Jeffery Deaver, William Boyd, and Anthony Horowitz. The latest novel is Forever and a Day by Anthony Horowitz, published in May 2018. Additionally Charlie Higson wrote a series on a young James Bond, and Kate Westbrook wrote three novels based on the diaries of a recurring series character, Moneypenny.";
+            var strOpr = new StringOperations();
+            document.getElementById('str').innerHTML = sampleStr;
+            document.getElementById('dv1').innerHTML = strOpr.getBlankSpaces(sampleStr);
+            document.getElementById('dv2').innerHTML = strOpr.getStatements(sampleStr);
+            document.getElementById('dv3').innerHTML = strOpr.getCommas(sampleStr);
+            document.getElementById('dv4').innerHTML = strOpr.convertToTitleCase(sampleStr);
+            document.getElementById('dv5').innerHTML = strOpr.getVowels(sampleStr);
+            document.getElementById('dv6').innerHTML = strOpr.getWordCount(sampleStr);
+            document.getElementById('intTextId').addEventListener('change', function() {
+                var count = strOpr.countSpecificWord(this.value, sampleStr);
+                document.getElementById('showCount').innerHTML = '<p>' + count + '</p>';
+            }, false);
+            
+        }
+    </script>
+</head>
+<body>
+    <h1>String Operations</h1>
+    <div>Sample String is <label id="str"></label></div>
+    <br>
+    <div>Count of BlankSpaces in above string is = <label id="dv1"></label></div>
+    <div>Count of Statements in above string is = <label id="dv2"></label></div>
+    <div>Count of Commas in above string is = <label id="dv3"></label></div>
+    <div>Convert String To Title Case in above string is = <br><br><label id="dv4"></label></div><br>
+    <div>Vowels count from above string = <label id="dv5"></label></div>
+    <div>Words count from above string = <label id="dv6"></label></div>
+    <div>Enter String to find frequency: <input type="text" name="inpText" id="intTextId"></div><br>
+    <div id="showCount"></div>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+        h1 {
+            text-align: center;
+        }
+    </style>
+    <script src="./../transpiled/products.trpl.js"></script>
+    <!-- <script src="./../source/code.js"></script> -->
+    <script>
+        window.onload = function () {
+            var prdTable = document.getElementById('prdTable');
+            prdTable.innerHTML += getTableData();
+
+            var rdCategoryBtn = document.getElementById('rdCategoryBtn');
+            rdCategoryBtn.innerHTML += getRadioButtons('categoryName');
+
+            document.getElementById('Shopping').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'categoryName');
+            }, false);
+
+            document.getElementById('Specialty').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'categoryName');
+            }, false);
+
+            document.getElementById('Food').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'categoryName');
+            }, false);
+
+            document.getElementById('D1').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'categoryName');
+            }, false);
+
+            var rdManufacturerBtn = document.getElementById('rdManufacturerBtn');
+            rdManufacturerBtn.innerHTML += getRadioButtons('manufacturer');
+
+            document.getElementById('Lenovo').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Sony').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Xtrade').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Maruti').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('LIC').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('TATA').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Farmer').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('M1').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Amul').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Renault').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Apple').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('NPAV').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('HDFC').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('Amazon').addEventListener('click', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getDataByRadioButton(this.value, 'manufacturer');
+            }, false);
+
+            document.getElementById('txtSearchId').addEventListener('keydown', function(){
+                prdTable.innerHTML = "";
+                prdTable.innerHTML += getSearchedTextResults(this.value);
+            }, false);
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Products List App</h1>
+    <hr>
+    <div class="container">
+        <div class="row">
+            <div style="text-align: center;">
+                <input type="text" name="txtSearch" id="txtSearchId" placeholder="Search for Products" 
+                    style="width: 70%">
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-2">Category</div>
+                        <div class="col" id="rdCategoryBtn"></div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-2">Manufacturer</div>
+                        <div class="col" id="rdManufacturerBtn"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <hr>
+        <div class="table-responsive-sm">
+            <div id="prdTable"></div>
+        </div>
+    </div>
+</body>
+
+</html>

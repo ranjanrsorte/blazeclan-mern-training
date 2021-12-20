@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Details App</title>
+    <script src="./../code/employeeApp.js"></script>
+    <script>
+
+        var myDB;
+        var table;
+        var showTable = false;
+
+        function createDatabase() {
+
+            myDB = window.indexedDB.open('EmployeeDB', 1);
+
+            myDB.onupgradeneeded = function (e) {
+
+                var dbReference = e.target.result;
+
+                table = dbReference.createObjectStore('Employees', { keyPath: 'id' });
+                var constraints = { unique: false };
+                var empIdConstraint = { unique: true };
+                table.createIndex("EmpNum", "EmployeeNo", empIdConstraint);
+                table.createIndex("EmpName", "EmployeeName", constraints);
+                table.createIndex("DeptName", "DepartmentName", constraints);
+                table.createIndex("EmpSalary", "Salary", constraints);
+                table.createIndex("EmpDesignation", "Designation", constraints);
+                // table.createIndex("EmpCity", "City", constraints);
+
+                document.getElementById('dbstatus').innerHTML = 'Database is created successfully and Object Store is created';
+
+            };
+
+            myDB.onsuccess = function (e) {
+                document.getElementById('dbstatus').innerHTML = e.srcElement.result.name + ' is successfully connected';
+            };
+
+            myDB.onerror = function (e) {
+                document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ' + e;
+            };
+
+        };
+        function loadData() {
+            var records = [];
+            myDB = window.indexedDB.open("EmployeeDB");
+
+            if (myDB) {
+                myDB.onsuccess = function (e) {
+                    // retriev the transaction object
+                    var transaction = e.target.result.transaction("Employees", "readwrite");
+                    table = transaction.objectStore("Employees");
+                    table.getAll().onsuccess = function (record) {
+                        
+                        for (var u = 0; u < record.target.result.length; u++) {
+                            document.getElementById('dbRecords').innerHTML += '<tr>' +
+                                '<td id="EmpNo">' + record.target.result[u].EmployeeNo + '</td>' +
+                                '<td id="EmpName">' + record.target.result[u].EmployeeName + '</td>' +
+                                '<td id="DeptName">' + record.target.result[u].DepartmentName + '</td>' +
+                                '<td id="EmpSal">' + record.target.result[u].Salary + '</td>' +
+                                '<td id="EmpDes">' + record.target.result[u].Designation + '</td>' +
+                                '</tr>';
+                        }
+                    }
+                };
+
+            } else {
+                document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ';
+            }
+        };
+
+        function saveData() {
+            if (document.getElementById('txtEmpId').value.length === 0 || document.getElementById('txtEmpName').value.length === 0
+                || document.getElementById('txtDeptName').value.length === 0 || document.getElementById('txtEmpSal').value.length === 0
+                || document.getElementById('txtEmpDes').value.length === 0 /*|| document.getElementById('txtEmpCity').value.length === 0*/) {
+                document.getElementById('reqMsg').innerHTML = "Please fill all the fields";
+            } else {
+                document.getElementById('reqMsg').innerHTML = "";
+                myDB = window.indexedDB.open('EmployeeDB');
+                if (myDB) {
+                    myDB.onsuccess = function (e) {
+                        var transaction = e.target.result.transaction("Employees", "readwrite");
+                        table = transaction.objectStore("Employees");
+
+                        var employee = {
+                            "id": parseInt(document.getElementById('txtEmpId').value),
+                            "EmployeeNo": document.getElementById('txtEmpId').value,
+                            "EmployeeName": document.getElementById('txtEmpName').value,
+                            "DepartmentName": document.getElementById('txtDeptName').value,
+                            "Salary": document.getElementById('txtEmpSal').value,
+                            "Designation": document.getElementById('txtEmpDes').value
+                            //"City": document.getElementById('txtEmpCity').value
+                        };
+                        var operation = table.add(employee);
+                        /*var tableGet = table.get(employee.id); //table.delete(person);
+                        console.log(tableGet);*/
+                        operation.onsuccess = function (e) {
+                            document.getElementById('dbstatus').innerHTML = 'Record is added successfully ';
+                        };
+
+                        operation.onerror = function (e) {
+                            document.getElementById('dbstatus').innerHTML = 'Add Operation failed ';
+                            document.getElementById('errorStatus').innerHTML = 'Employee with same Id is already present';
+                        };
+                    };
+                } else {
+                    document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ';
+                }
+            }
+
+        };
+
+        function updateData() {
+            if (document.getElementById('txtEmpId').value.length === 0 || document.getElementById('txtEmpName').value.length === 0
+                || document.getElementById('txtDeptName').value.length === 0 || document.getElementById('txtEmpSal').value.length === 0
+                || document.getElementById('txtEmpDes').value.length === 0 /*|| document.getElementById('txtEmpCity').value.length === 0*/) {
+                document.getElementById('reqMsg').innerHTML = "Please fill all the fields";
+            } else {
+                document.getElementById('reqMsg').innerHTML = "";
+                myDB = window.indexedDB.open('EmployeeDB');
+                if (myDB) {
+                    myDB.onsuccess = function (e) {
+                        var transaction = e.target.result.transaction("Employees", "readwrite");
+                        table = transaction.objectStore("Employees");
+
+                        var employee = {
+                            "id": parseInt(document.getElementById('txtEmpId').value),
+                            "EmployeeNo": document.getElementById('txtEmpId').value,
+                            "EmployeeName": document.getElementById('txtEmpName').value,
+                            "DepartmentName": document.getElementById('txtDeptName').value,
+                            "Salary": document.getElementById('txtEmpSal').value,
+                            "Designation": document.getElementById('txtEmpDes').value
+                            //"City": document.getElementById('txtEmpCity').value
+                        };
+                        var operation = table.put(employee);
+                        /*var tableGet = table.get(employee.id); //table.delete(person);
+                        console.log(tableGet);*/
+                        operation.onsuccess = function (e) {
+                            document.getElementById('dbstatus').innerHTML = 'Record is added successfully ';
+                        };
+
+                        operation.onerror = function (e) {
+                            document.getElementById('dbstatus').innerHTML = 'Add Operation failed ';
+                            document.getElementById('errorStatus').innerHTML = 'Employee with same Id is already present';
+                        };
+                    };
+                } else {
+                    document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ';
+                }
+            }
+
+        }
+
+        function deleteData() {
+            document.getElementById('reqMsg').innerHTML = "";
+            myDB = window.indexedDB.open('EmployeeDB');
+            if (myDB) {
+                myDB.onsuccess = function (e) {
+                    var transaction = e.target.result.transaction("Employees", "readwrite");
+                    table = transaction.objectStore("Employees");
+
+                    var employee = {
+                        "id": parseInt(document.getElementById('txtEmpId').value),
+                        "EmployeeNo": document.getElementById('txtEmpId').value,
+                        "EmployeeName": document.getElementById('txtEmpName').value,
+                        "DepartmentName": document.getElementById('txtDeptName').value,
+                        "Salary": document.getElementById('txtEmpSal').value,
+                        "Designation": document.getElementById('txtEmpDes').value
+                        //"City": document.getElementById('txtEmpCity').value
+                    };
+                    var operation = table.delete(parseInt(document.getElementById('txtEmpId').value));
+                    /*var tableGet = table.get(employee.id); //table.delete(person);
+                    console.log(tableGet);*/
+                    operation.onsuccess = function (e) {
+                        document.getElementById('dbstatus').innerHTML = 'Record is deleted successfully ';
+                    };
+
+                    operation.onerror = function (e) {
+                        document.getElementById('dbstatus').innerHTML = 'Add Operation failed ';
+                        document.getElementById('errorStatus').innerHTML = 'Id not found';
+                    };
+                };
+            } else {
+                document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ';
+            }
+        }
+
+        function clearInputs() {
+            var inputs = document.getElementsByClassName('empDetails');
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].value = '';
+            }
+        };
+
+        function createGroupedList(records, property) {
+            let result = records.reduce((groupResult, record) => {
+                //console.log(`Current State ${JSON.stringify(groupResult)} and current record ${JSON.stringify(record)}`);
+
+                let key = record[property];
+                //console.log(`Key of the record = ${key}`);
+
+                if (!groupResult[key]) {
+                    groupResult[key] = [];
+                }
+
+                groupResult[key].push(record);
+                //console.log(`After match found for push state is = ${JSON.stringify(groupResult)}`);
+
+                return groupResult;
+
+            }, {});
+
+            return result;
+        };
+
+        function getDataByRadioButton(radioButtonValue, categoryName) {
+            var records = [];
+            myDB = window.indexedDB.open("EmployeeDB");
+
+            if (myDB) {
+                myDB.onsuccess = function (e) {
+                    // retriev the transaction object
+                    var transaction = e.target.result.transaction("Employees", "readwrite");
+                    table = transaction.objectStore("Employees");
+                    table.getAll().onsuccess = function (record) {
+
+                        let recordsByCategory = createGroupedList(record.target.result, categoryName);
+                        let groupValues = Object.assign({}, recordsByCategory);
+                        let groupedRecords = groupValues[radioButtonValue];
+                        document.getElementById('dbRecords').innerHTML = "";
+                        for (var u = 0; u < groupedRecords.length; u++) {
+                            document.getElementById('dbRecords').innerHTML += '<tr>' +
+                                '<td id="EmpNo">' + groupedRecords[u].EmployeeNo + '</td>' +
+                                '<td id="EmpName">' + groupedRecords[u].EmployeeName + '</td>' +
+                                '<td id="DeptName">' + groupedRecords[u].DepartmentName + '</td>' +
+                                '<td id="EmpSal">' + groupedRecords[u].Salary + '</td>' +
+                                '<td id="EmpDes">' + groupedRecords[u].Designation + '</td>' +
+                                '</tr>';
+                        }
+                    }
+                };
+
+            } else {
+                document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ';
+            }
+        }
+
+        function loadUIAndAttachEvents() {
+            createDatabase();
+            document.getElementById('btnSave').addEventListener('click', saveData, false);
+            document.getElementById('btnClear').addEventListener('click', clearInputs, false);
+            document.getElementById('btnUpdate').addEventListener('click', updateData, false);
+            document.getElementById('btnDelete').addEventListener('click', deleteData, false);
+            document.getElementById('btnLoadData').addEventListener('click', function () {
+                var records = [];
+                myDB = window.indexedDB.open("EmployeeDB");
+
+                if (myDB) {
+                    myDB.onsuccess = function (e) {
+                        // retriev the transaction object
+                        var transaction = e.target.result.transaction("Employees", "readwrite");
+                        table = transaction.objectStore("Employees");
+                        table.getAll().onsuccess = function (record) {
+                            document.getElementById('dbRecords').innerHTML = "";
+                            for (var u = 0; u < record.target.result.length; u++) {
+                                document.getElementById('dbRecords').innerHTML += '<tr>' +
+                                    '<td id="EmpNo_' + u + '">' + record.target.result[u].EmployeeNo + '</td>' +
+                                    '<td id="EmpName">' + record.target.result[u].EmployeeName + '</td>' +
+                                    '<td id="DeptName">' + record.target.result[u].DepartmentName + '</td>' +
+                                    '<td id="EmpSal">' + record.target.result[u].Salary + '</td>' +
+                                    '<td id="EmpDes">' + record.target.result[u].Designation + '</td>' +
+                                    '</tr>';
+                            }
+
+                            for (var u = 0; u < record.target.result.length; u++) {
+                                document.getElementById('EmpNo_' + u).addEventListener('click', function () {
+                                    var ind = this.id;
+                                    var x = ind.substring(6, 7);
+
+                                    var dataFromDB = record.target.result[x];
+                                    document.getElementById('txtEmpId').value = dataFromDB.id;
+                                    document.getElementById('txtEmpName').value = dataFromDB.EmployeeName;
+                                    document.getElementById('txtEmpSal').value = dataFromDB.Salary;
+                                    document.getElementById('txtDeptName').value = dataFromDB.DepartmentName;
+                                    document.getElementById('txtEmpDes').value = dataFromDB.Designation;
+                                }, false);
+                            }
+                        }
+                    };
+
+                    var txtEmpName = document.getElementById('txtEmpName')
+                    txtEmpName.addEventListener('change', function () {
+                        for (var k = 0; k < txtEmpName.value.length; k++) {
+                            if (txtEmpName.value[k] == "1" || txtEmpName.value[k] == "2" || txtEmpName.value[k] == "3"
+                                || txtEmpName.value[k] == "4" || txtEmpName.value[k] == "5" || txtEmpName.value[k] == "6"
+                                || txtEmpName.value[k] == "7" || txtEmpName.value[k] == "8" || txtEmpName.value[k] == "9"
+                                || txtEmpName.value[k] == "0" || txtEmpName.value[k] == "!" || txtEmpName.value[k] == "@"
+                                || txtEmpName.value[k] == "#" || txtEmpName.value[k] == "$" || txtEmpName.value[k] == "%"
+                                || txtEmpName.value[k] == "^" || txtEmpName.value[k] == "&" || txtEmpName.value[k] == "*"
+                                || txtEmpName.value[k] == "(" || txtEmpName.value[k] == ")") {
+                                document.getElementById('warningMsg').innerHTML = "Employee name must contains only alphabets";
+                                document.getElementById('btnUpdate').innerHTML = '';
+                            } else if (txtEmpName.value[0] !== txtEmpName.value[0].toUpperCase()) {
+                                document.getElementById('warningMsg').innerHTML = "Employee Name first letter should be capital";
+                                document.getElementById('btnUpdate').innerHTML = '';
+                            } else {
+                                document.getElementById('warningMsg').innerHTML = "";
+                                document.getElementById('btnUpdate').innerHTML = '<input type="button" value="Update" id="btnUpdate">';
+                            }
+                        }
+                        if (txtEmpName.value.length === 0) document.getElementById('warningMsg').innerHTML = "";
+                    }, false);
+                } else {
+                    document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ';
+                }
+            }, false);
+
+            var employeeApp = new EmployeeApp();
+            var departments = employeeApp.getDepartments();
+            var designation = employeeApp.getDesignation();
+
+            var dept;
+            for (var i = 0; i < departments.length; i++) {
+                dept += '<option value="' + departments[i] + '">' + departments[i] + '</option>';
+            }
+            document.getElementById('txtDeptName').innerHTML = dept;
+
+            var desig;
+            for (var i = 0; i < designation.length; i++) {
+                desig += '<option value="' + designation[i] + '">' + designation[i] + '</option>';
+            }
+            document.getElementById('txtEmpDes').innerHTML = desig;
+
+            var txtEmpName = document.getElementById('txtEmpName')
+
+            txtEmpName.addEventListener('change', function () {
+                for (var k = 0; k < txtEmpName.value.length; k++) {
+                    if (txtEmpName.value[k] == "1" || txtEmpName.value[k] == "2" || txtEmpName.value[k] == "3"
+                        || txtEmpName.value[k] == "4" || txtEmpName.value[k] == "5" || txtEmpName.value[k] == "6"
+                        || txtEmpName.value[k] == "7" || txtEmpName.value[k] == "8" || txtEmpName.value[k] == "9"
+                        || txtEmpName.value[k] == "0" || txtEmpName.value[k] == "!" || txtEmpName.value[k] == "@"
+                        || txtEmpName.value[k] == "#" || txtEmpName.value[k] == "$" || txtEmpName.value[k] == "%"
+                        || txtEmpName.value[k] == "^" || txtEmpName.value[k] == "&" || txtEmpName.value[k] == "*"
+                        || txtEmpName.value[k] == "(" || txtEmpName.value[k] == ")") {
+                        document.getElementById('warningMsg').innerHTML = "Employee name must contains only alphabets";
+                        document.getElementById('btnSave').innerHTML = '';
+                    } else if (txtEmpName.value[0] !== txtEmpName.value[0].toUpperCase()) {
+                        document.getElementById('warningMsg').innerHTML = "Employee Name first letter should be capital";
+                        document.getElementById('btnSave').innerHTML = '';
+                    } else {
+                        document.getElementById('warningMsg').innerHTML = "";
+                        document.getElementById('btnSave').innerHTML = '<input type="button" value="Save" id="btnSave">';
+                    }
+                }
+                if (txtEmpName.value.length === 0) document.getElementById('warningMsg').innerHTML = "";
+            }, false);
+
+            for (let i = 0; i < departments.length; i++) {
+                document.getElementById('deptRadioBtn').innerHTML += '<input type="radio" name="deptRadioName" id="' + departments[i] + '" value="' + departments[i] + '" />' + departments[i];
+            }
+
+            for (let i = 0; i < designation.length; i++) {
+                document.getElementById('designationRadioBtn').innerHTML += '<input type="radio" name="designationRadioName" id="' + designation[i] + '" value=' + designation[i] + ' />' + designation[i];
+            }
+
+            document.getElementById('IT').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('IT').value, 'DepartmentName');
+            }, false);
+
+            document.getElementById('HR').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('HR').value, 'DepartmentName');
+            }, false);
+
+            document.getElementById('SL').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('SL').value, 'DepartmentName');
+            }, false);
+
+            document.getElementById('AC').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('AC').value, 'DepartmentName');
+            }, false);
+
+            document.getElementById('Team_Lead').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('Team_Lead').value, 'Designation');
+            }, false);
+
+            document.getElementById('Jr_Developer').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('Jr_Developer').value, 'Designation');
+            }, false);
+
+            document.getElementById('Sr_Developer').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('Sr_Developer').value, 'Designation');
+            }, false);
+
+            document.getElementById('Designer').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('Designer').value, 'Designation');
+            }, false);
+
+            document.getElementById('Manager').addEventListener('change', function () {
+                getDataByRadioButton(document.getElementById('Manager').value, 'Designation');
+            }, false);
+
+            var isDesc = false;
+            document.getElementById('empno').addEventListener('click', function () {
+                var records = [];
+                myDB = window.indexedDB.open("EmployeeDB");
+
+                if (myDB) {
+                    myDB.onsuccess = function (e) {
+                        // retriev the transaction object
+                        var transaction = e.target.result.transaction("Employees", "readwrite");
+                        table = transaction.objectStore("Employees");
+                        table.getAll().onsuccess = function (record) {
+                            let employees = record.target.result;
+                            if(isDesc) {
+                                employees = employees.sort(function (a, b) { return a.EmployeeNo - b.EmployeeNo; });
+                                isDesc = false;
+                            } else {
+                                employees = employees.sort(function (a, b) { return b.EmployeeNo - a.EmployeeNo; });
+                                isDesc = true;
+                            }
+                            document.getElementById('dbRecords').innerHTML = "";
+                                
+                            for (var u = 0; u < record.target.result.length; u++) {
+                                document.getElementById('dbRecords').innerHTML += '<tr>' +
+                                    '<td id="EmpNo">' + record.target.result[u].EmployeeNo + '</td>' +
+                                    '<td id="EmpName">' + record.target.result[u].EmployeeName + '</td>' +
+                                    '<td id="DeptName">' + record.target.result[u].DepartmentName + '</td>' +
+                                    '<td id="EmpSal">' + record.target.result[u].Salary + '</td>' +
+                                    '<td id="EmpDes">' + record.target.result[u].Designation + '</td>' +
+                                    '</tr>';
+                            }
+                        }
+                    };
+
+                } else {
+                    document.getElementById('dbstatus').innerHTML = 'Error Occured while opening database ';
+                }
+            }, false)
+        }
+
+        window.onload = loadUIAndAttachEvents;
+
+    </script>
+</head>
+
+<body>
+    <h1 align="center">Employee Details Application</h1>
+    <hr />
+    <div id="dbstatus" align="center"></div>
+    <hr />
+    <table align="center">
+        <tr>
+            <td>Employee No</td>
+            <td>
+                <input type="number" id="txtEmpId" class="empDetails" required>
+            </td>
+            <td>Employee Name</td>
+            <td>
+                <input type="text" id="txtEmpName" class="empDetails" pattern="^[A-Za-z]+" required> <a
+                    id="warningMsg"></a>
+            </td>
+        </tr>
+        <tr>
+            <td>Salary</td>
+            <td>
+                <input type="number" id="txtEmpSal" class="empDetails" required>
+            </td>
+            <!-- <td>City</td>
+            <td>
+                <input type="text" id="txtEmpCity" class="empDetails" required>
+            </td> -->
+        </tr>
+        <tr>
+            <td>Department</td>
+            <td>
+                <!-- <input type="text" id="txtDeptName" class="c"> -->
+                <select class="empDetails" id="txtDeptName" name="empDept" required />
+            </td>
+            <td>Designation</td>
+            <td>
+                <!-- <input type="text" id="txtEmpDes" class="c"> -->
+                <select class="empDetails" id="txtEmpDes" name="empDes" required />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a id="reqMsg"></a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="button" value="Clear" id="btnClear">
+            </td>
+            <td>
+                <input type="button" value="Show All Employees" id="btnLoadData">
+                <a id="btnSave"></a>
+                <a id="btnUpdate"></a>
+                <input type="button" value="Delete" id="btnDelete" />
+            </td>
+        </tr>
+    </table>
+    <div align="center">
+        <a id="errorStatus"></a>
+    </div>
+    <hr />
+    <div align="center">
+        Departments: <a id="deptRadioBtn"></a>
+
+    </div>
+    <div align="center">
+        Designation: <a id="designationRadioBtn"></a>
+    </div>
+
+    <hr />
+    <table align="center">
+        <thead>
+            <tr>
+                <th id="empno">Employee No</th>
+                <th>EmployeeName</th>
+                <th>DepartmentName</th>
+                <th>Salary</th>
+                <th>Designation</th>
+            </tr>
+        </thead>
+        <tbody id="dbRecords"></tbody>
+    </table>
+    <!-- <tfoot>
+        <tr>
+            <td colspan="2">
+                <div id="dbRecords"></div>
+            </td>
+        </tr>
+    </tfoot> -->
+</body>
+
+</html>

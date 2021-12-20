@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD App</title>
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <script>
+        var departments = [];
+
+        function getAllDepartmentData() {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(error);
+                };
+
+                ajax.open("GET", "http://localhost:7013/api/departments");
+                ajax.send();
+            });
+        }
+
+        function findSearchedTextDepartment(text) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(error);
+                };
+
+                ajax.open("GET", "http://localhost:7013/api/getSearchedText/" + text);
+                ajax.send();
+            });
+        }
+
+        function addDepartment(dept) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                ajax.open("POST", "http://localhost:7013/api/add/departments");
+                ajax.setRequestHeader("Content-Type", "application/json");
+                ajax.send(JSON.stringify(dept));
+            });
+        }
+
+        function updateDepartment(dept) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+
+                ajax.open("PUT", "http://localhost:7013/api/update/departments/" + dept.deptno);
+                ajax.setRequestHeader("Content-Type", "application/json");
+                ajax.send(JSON.stringify(dept));
+            });
+        }
+
+        function deleteDepartment(deptno) {
+            return new Promise((resolve, reject) => {
+                let ajax = new XMLHttpRequest();
+
+                ajax.onload = function () {
+                    resolve(ajax.response);
+                };
+
+                ajax.onerror = function (error) {
+                    reject(e);
+                };
+                ajax.open("DELETE", `http://localhost:7013/api/delete/departments/${deptno}`);
+                ajax.setRequestHeader("Content-Type", "application/json");
+                ajax.send();
+            });
+        }
+
+        function generateDepartmentTable(data) {
+            let tableKeys = Object.keys(data[0]);
+            var table = '<table>';
+            var tr = '<tr>';
+            table += '<thead><tr>';
+            for (let x = 0; x < tableKeys.length; x++) {
+                table += '<th>' + tableKeys[x].toUpperCase() + '</th>';
+            }
+            table += '</tr></thead><tbody>';
+
+            for (let i = 0; i < data.length; i++) {
+                tr += '<td id="dept_' + data[i].deptno + '">' + data[i].deptno + '</td>'
+                    + '<td>' + data[i].deptname + '</td>'
+                    + '<td>' + data[i].location + '</td>'
+                    + '<td>' + data[i].capacity + '</td>'
+                    + '</tr>';
+            }
+
+            table += tr + '</tbody>';
+            return table;
+        }
+
+        window.onload = function () {
+            var departmentList = getAllDepartmentData();
+            departmentList.then(function (response) {
+                let data = JSON.parse(response);
+                tbody = generateDepartmentTable(data.data);
+                document.getElementById('deptTblId').innerHTML = tbody;
+                let allDepartment = data.data;
+                for (let i = 0; i < allDepartment.length; i++) {
+                    let deptId = 'dept_' + allDepartment[i].deptno;
+                    document.getElementById(deptId).addEventListener('click', function () {
+                        console.log(`here`);
+                        document.getElementById("deptnoId").value = allDepartment[i].deptno;
+                        document.getElementById("deptnameId").value = allDepartment[i].deptname;
+                        document.getElementById("locationId").value = allDepartment[i].location;
+                        document.getElementById("capacityId").value = allDepartment[i].capacity;
+                    }, false);
+                }
+                document.getElementById('deptnoId').value = "";
+                document.getElementById('deptnameId').value = "";
+                document.getElementById('locationId').value = "";
+                document.getElementById('capacityId').value = "";
+            }).catch(function (error) {
+                document.getElementById('deptTblId').innerHTML = error;
+            });
+
+            document.getElementById('btnSave').addEventListener('click', function () {
+                let dept = {
+                    "deptno": document.getElementById('deptnoId').value,
+                    "deptname": document.getElementById('deptnameId').value,
+                    "location": document.getElementById('locationId').value,
+                    "capacity": document.getElementById('capacityId').value
+                };
+                var deptData = addDepartment(dept);
+                deptData.then(function (response) {
+                    departments.push(JSON.parse(response));
+                }).catch(function (error) {
+                    document.getElementById('deptTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('btnUpdate').addEventListener('click', function() {
+                let dept = {
+                    "deptno": document.getElementById('deptnoId').value,
+                    "deptname": document.getElementById('deptnameId').value,
+                    "location": document.getElementById('locationId').value,
+                    "capacity": document.getElementById('capacityId').value
+                };
+                var deptData = updateDepartment(dept);
+                deptData.then(function (response) {
+                    departments.push(JSON.parse(response));
+                }).catch(function (error) {
+                    document.getElementById('deptTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('btnDelete').addEventListener('click', function(){
+                let deptno = document.getElementById("deptnoId").value;
+                var deptData = deleteDepartment(deptno);
+                deptData.then(function (response) {
+                    departments.push(JSON.parse(response));
+                }).catch(function (error) {
+                    document.getElementById('deptTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('searchTextId').addEventListener('change', function () {
+                let foundData = findSearchedTextDepartment(this.value);
+                foundData.then(function (response) {
+                    let data = JSON.parse(response);
+                    tbody = generateDepartmentTable(data.data);
+                    document.getElementById('deptTblId').innerHTML = tbody;
+                }).catch(function (error) {
+                    document.getElementById('deptTblId').innerHTML = error;
+                });
+            }, false);
+
+            document.getElementById('btnClear').addEventListener('click', function(){
+                document.getElementById('deptnoId').value = "";
+                document.getElementById('deptnameId').value = "";
+                document.getElementById('locationId').value = "";
+                document.getElementById('capacityId').value = "";
+            }, false);
+
+        }
+    </script>
+</head>
+
+<body>
+    <h1>NodeJS Express CRUD App with PostgreSQL</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Department No</label>
+                <input type="number" class="form-control" id="deptnoId" />
+                <br />
+                <label>Department Name</label>
+                <input type="text" class="form-control" id="deptnameId" />
+                <br />
+                <label>Location</label>
+                <input type="text" class="form-control" id="locationId" />
+                <br />
+                <label>Capacity</label>
+                <input type="number" class="form-control" id="capacityId" />
+                <br />
+                <button id="btnSave" class="btn btn-primary">Save</button>
+                <button id="btnUpdate" class="btn btn-success">Update</button>
+                <button id="btnClear" class="btn btn-warning">Clear</button>
+                <button id="btnDelete" class="btn btn-danger">Delete</button>
+            </div>
+            <div class="col-sm-6">
+                <input type="text" id="searchTextId" class="form-control" placeholder="Search Department By Name" />
+                <br />
+                <table id="deptTblId" class="table table-border table-striped"></table>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

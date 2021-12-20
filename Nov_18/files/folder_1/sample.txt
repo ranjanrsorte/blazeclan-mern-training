@@ -1,0 +1,1 @@
+I am a sample file from folder_1 directory.

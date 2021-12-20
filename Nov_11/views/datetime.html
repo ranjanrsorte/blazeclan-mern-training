@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+        h3 {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+    <script src="./../code/datetime.js"></script>
+    <script>
+        window.onload = function () {
+            var dateTime = new DateTime();
+            document.getElementById('btnSubmit').addEventListener('click', function () {
+
+                let fromDateId = document.getElementById('fromDateId').value;
+                let toDateId = document.getElementById('toDateId').value;
+                let fromTimeId = document.getElementById('fromTimeId').value;
+                let toTimeId = document.getElementById('toTimeId').value;
+                
+                let fromTimeHours = fromTimeId.substring(0, 2);
+                let fromTimeMinutes = fromTimeId.substring(3, 5);
+
+                let toTimeHours = toTimeId.substring(0, 2);
+                let toTimeMinutes = toTimeId.substring(3, 5);
+
+                let fromDateValue = new Date(fromDateId);
+                fromDateValue.setHours(fromTimeHours);
+                fromDateValue.setMinutes(fromTimeMinutes);
+                
+                let toDateValue = new Date(toDateId);
+                toDateValue.setHours(toTimeHours);
+                toDateValue.setMinutes(toTimeMinutes);
+
+                document.getElementById('resultDiv').innerHTML = dateTime.getDifference(fromDateValue, toDateValue);
+            }, false);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h3>Date Time Picker App</h3>
+    </div>
+    <hr>
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="date" name="fromDate" id="fromDateId"></td>
+                    <td><input type="date" name="toDate" id="toDateId"></td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>From Time</th>
+                    <th>To Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="time" name="fromTime" id="fromTimeId"></td>
+                    <td><input type="time" name="toTime" id="toTimeId"></td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <div class="container">
+            <button type="button" id="btnSubmit" class= "btn btn-success">Get Date & Time Difference</button>
+        </div>
+        <hr>
+        <div class="container" id="resultDiv"></div>
+    </div>
+</body>
+
+</html>

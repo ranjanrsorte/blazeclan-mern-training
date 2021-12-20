@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <script src="logic.js"></script>
+    <script>
+        function generateTable(data) {
+            let keys = Object.keys(data[0]);
+            let table = '<table class="table"><thead><tr>';
+            for (let x = 0; x < keys.length; x++) {
+                table += "<th>" + keys[x].toUpperCase() + "</th>";
+            }
+            table += "</tr></thead><tbody>";
+
+            for (let i = 0; i < data.length; i++) {
+                table += "<tr>" +
+                    "<td>" + data[i].empno + "</td>" +
+                    "<td>" + data[i].empname + "</td>" +
+                    "<td>" + data[i].designation + "</td>" +
+                    "<td>" + data[i].salary + "</td>" +
+                    "<td>" + data[i].deptname + "</td>" + "</tr>";
+            }
+            table += "</tbody></table>";
+
+            return table;
+        }
+        window.onload = function () {
+            let promise = getAllEmployeesData();
+            promise.then(function (response) {
+                let responseData = JSON.parse(response);
+                let data = responseData.data;
+                let table = generateTable(data);
+                document.getElementById("tblId").innerHTML = table;
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+            let department = getAllDepartmentData();
+            department.then(function (response) {
+                let deptResponseData = JSON.parse(response);
+                let depts = deptResponseData.data;
+                var option;
+                for (var i in depts) {
+                    option += '<option value="' + depts[i].deptname + '">' + depts[i].deptname + '</option>';
+                }
+                document.getElementById('lstdname').innerHTML = option;
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+            document.getElementById('schInputOrId').addEventListener('change', function () {
+                let searchText = this.value;
+                var results = getSearchedTextEmployeeDataOr(searchText);
+                results.then(function (response) {
+                    let data = JSON.parse(response);
+                    let dataSource = data.data;
+                    let table = generateTable(dataSource);
+                    document.getElementById("tblId").innerHTML = table;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+                console.log(searchText);
+            }, false);
+
+            document.getElementById('schInputAndId').addEventListener('change', function () {
+                let searchText = this.value;
+                var results = getSearchedTextEmployeeDataAnd(searchText);
+                results.then(function (response) {
+                    let data = JSON.parse(response);
+                    let dataSource = data.data;
+                    let table = "";
+                    if (dataSource.length > 0) {
+                        table = generateTable(dataSource);
+                        document.getElementById("tblId").innerHTML = table;
+                    } else {
+                        document.getElementById("tblId").innerHTML = "No Records found";
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }, false);
+
+            document.getElementById('schInputInId').addEventListener('change', function () {
+                let searchText = this.value;
+                var results = getSearchedTextEmployeeDataIn(searchText);
+                results.then(function (response) {
+                    let data = JSON.parse(response);
+                    let dataSource = data.data;
+                    let table = "";
+                    if (dataSource.length > 0) {
+                        table = generateTable(dataSource);
+                        document.getElementById("tblId").innerHTML = table;
+                    } else {
+                        document.getElementById("tblId").innerHTML = "No Records found";
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }, false);
+
+            document.getElementById('schInputSalaryId').addEventListener('change', function () {
+                let searchText = this.value;
+                var results = getSearchedTextEmployeeDataSalary(searchText);
+                results.then(function (response) {
+                    let data = JSON.parse(response);
+                    let dataSource = data.data;
+                    let table = "";
+                    if (dataSource.length > 0) {
+                        table = generateTable(dataSource);
+                        document.getElementById("tblId").innerHTML = table;
+                    } else {
+                        document.getElementById("tblId").innerHTML = "No Records found";
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }, false);
+
+            document.getElementById('lstdname').addEventListener('change', function () {
+                dname = this.options[this.selectedIndex].value;
+                var results = getEmployeesByDepartment(dname);
+                results.then(function (response) {
+                    let data = JSON.parse(response);
+                    let dataSource = data.data;
+                    let table = "";
+                    if (dataSource.length > 0) {
+                        table = generateTable(dataSource);
+                        document.getElementById("tblId").innerHTML = table;
+                    } else {
+                        document.getElementById("tblId").innerHTML = "No Records found";
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }, false);
+        }
+    </script>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Server Side Search App</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="schInputName" id="schInputOrId"
+                    placeholder="OR Operator Search">
+                <br />
+            </div>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="schInputName" id="schInputAndId"
+                    placeholder="AND Operator Search">
+                <br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="schInputName" id="schInputInId"
+                    placeholder="in ('IT', 'HR', 'TR') Search">
+                <br />
+            </div>
+            <div class="col-sm-6">
+                <label>Department Name</label>
+                <select id="lstdname" class="c1"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="text" class="form-control" name="schInputName" id="schInputSalaryId"
+                    placeholder="Salary >= 10000 OR  Salary <=60000 Search">
+            </div>
+            <br />
+        </div>
+        <div id="tblId"></div>
+    </div>
+</body>
+
+</html>

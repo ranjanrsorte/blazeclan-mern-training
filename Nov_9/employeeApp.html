@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="./employeeApp.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        window.onload = function () {
+            var startIndex = 0;
+            var lastIndex = 4;
+            var employee = new Employee();
+            var employeeToEdit;
+
+            var empTable = document.getElementById('empTable');
+            empTable.innerHTML += employee.getTableData(startIndex, lastIndex);
+
+            var pagList = document.getElementById('pagList');
+            var empCount = employee.getEmployeeCount();
+
+            pagList.innerHTML += employee.generatePagesNumber();
+
+            for (var p = 1; p < empCount / 5; p++) {
+
+                document.getElementById('page_' + p).addEventListener('click', function () {
+                    if (parseInt(this.textContent) === 1)
+                        startIndex = 0;
+                    else
+                        startIndex = 5 * (parseInt(this.textContent) - 1);
+
+                    lastIndex = parseInt(startIndex) + 4;
+                    empTable.innerHTML = "";
+                    empTable.innerHTML += employee.getTableData(startIndex, lastIndex);
+
+                    if (parseInt(this.textContent) === 1) {
+                        document.getElementById('lstPrev').className = "page-item disabled";
+                        document.getElementById('lstNxt').className = "page-item";
+                    } else if (parseInt(this.textContent) === 8) {
+                        document.getElementById('lstPrev').className = "page-item";
+                        document.getElementById('lstNxt').className = "page-item disabled";
+                    } else {
+                        document.getElementById('lstPrev').className = "page-item";
+                        document.getElementById('lstNxt').className = "page-item";
+                    }
+                    console.log(p);
+
+                    for (var t = startIndex + 1; t <= lastIndex + 1; t++) {
+                        document.getElementById(t).addEventListener('click', function () {
+                            employeeToEdit = employee.getEmployeeById(this.id - 1, this.id - 1, false);
+                            document.getElementById('empNo').value = employeeToEdit[0]['No'];
+                            document.getElementById('empName').value = employeeToEdit[0]['Name'];
+                            document.getElementById('empDept').value = employeeToEdit[0]['Department'];
+                            document.getElementById('empSal').value = employeeToEdit[0]['Salary'];
+                            document.getElementById('empDesig').value = employeeToEdit[0]['Designation'];
+                        }, false);
+                    }
+                }, false);
+            }
+            for (var t = startIndex + 1; t <= lastIndex + 1; t++) {
+                document.getElementById(t).addEventListener('click', function () {
+                    employeeToEdit = employee.getEmployeeById(this.id - 1, this.id - 1, false);
+                    document.getElementById('empNo').value = employeeToEdit[0]['No'];
+                    document.getElementById('empName').value = employeeToEdit[0]['Name'];
+                    document.getElementById('empDept').value = employeeToEdit[0]['Department'];
+                    document.getElementById('empSal').value = employeeToEdit[0]['Salary'];
+                    document.getElementById('empDesig').value = employeeToEdit[0]['Designation'];
+                }, false);
+            }
+
+            document.getElementById('btnUpdate').addEventListener('click', function() {
+                
+                employeeToEdit[0]['No'] = document.getElementById('empNo').value;
+                employeeToEdit[0]['Name'] = document.getElementById('empName').value;
+                employeeToEdit[0]['Department'] = document.getElementById('empDept').value;
+                employeeToEdit[0]['Salary'] = document.getElementById('empSal').value;
+                employeeToEdit[0]['Designation'] = document.getElementById('empDesig').value;
+                
+                empTable.innerHTML = "";
+                empTable.innerHTML += employee.updateEmployeeById(startIndex, lastIndex, employeeToEdit);
+            }, false);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="text-align:center; font-family: fantasy;">Employee List App</h1>
+    </div>
+    <div class="container">
+        <div class="table-responsive-sm">
+            <div id="empTable"></div>
+        </div>
+    </div>
+    <div id="pagList" class="container">
+    </div>
+    <!-- Modal UI -->
+    <div class="modal fade" id="themodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Employee Details</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>No</label>
+                        <input id="empNo" type="text" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input id="empName" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input id="empDept" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Salary</label>
+                        <input id="empSal" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Designation</label>
+                        <input id="empDesig" type="text" class="form-control">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="btn-group-large">
+                        <input id="btnUpdate" type="button" value="Update" class="btn btn-success" data-bs-dismiss="modal">
+                        <input id="btnCancel" type="button" value="Cancel" class="btn btn-danger" data-bs-dismiss="modal">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
